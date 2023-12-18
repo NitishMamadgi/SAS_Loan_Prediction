@@ -236,7 +236,7 @@ run;
 
 
 /* fit with logistic regression model */
-proc logistic data=project.loan_prediction;
+proc logistic data=project.loan_prediction outmodel=project.logistic_model;
 
 	class gender marital_status family_members qualification employment 
 		  loan_location loan_history;
