@@ -317,15 +317,38 @@ run;
 	which the true odds ratio is likely to fall with 95% confidence. If CI includes 1 then thr is no 
 	significant difference btwn the groups of the variables for predicting outcomes
 	
-	Association of Predicted Probabilities and Observed Responses:
-	
-
-
-		
-	
 	*/
 
 	
+/* Import Test data */
+proc import datafile="/home/u63491025/sasuser.v94/excel_files/loan_test_SAS.csv"
+    dbms=csv out=project.test_data replace;
+    getnames=yes;
+run;
+
+
+data loan_prediction_test(drop = loan_history loan_duration);
+	set project.test_data;
 	
+    informat guarantee_income loan_amount candidate_income 8.;   /* Apply informats and formats */
+    format guarantee_income loan_amount candidate_income 8.;
+    
+    LOAN__HISTORY = put(loan_history, 1.);						* Convert from numeric to character;
+    LOAN__DURATION = put(loan_duration, 3.);
 	
+	informat LOAN__HISTORY $1. LOAN__DURATION $3.;
+	format LOAN__HISTORY $1. LOAN__DURATION $3.;
+	
+	rename LOAN__HISTORY = LOAN_HISTORY LOAN__DURATION = LOAN_DURATION;
+run;
+
+
+
+/* Score the test data using the trained logistic regression model */
+proc logistic inmodel= project.logistic_model;
+    score data= loan_prediction_test out= project.TestOutput;
+run;
+
+
+
 
